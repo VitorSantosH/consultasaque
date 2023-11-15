@@ -10,6 +10,7 @@ const Solicitacao = conn.model("userSolivitcacao", solicitacaoSchema)
 const { authSecret } = require('../config/secret.js');
 
 
+
 const newSolicitacao = async (req, res,) => {
 
     const salt = await bcrypt.genSalt(10);
@@ -176,11 +177,13 @@ const generateUser = async (req, res, next) => {
 
 }
 
-const updateUser = async (req, res,) => {
-
+const getUser = async (req, res,) => {
 
     let decoded = {}
 
+    console.log('aqui')
+
+    //verifica o token, se o token esta correto e se o usuario é admin
     try {
 
         decoded = jwt.decode(req.body.token, authSecret);
@@ -199,6 +202,74 @@ const updateUser = async (req, res,) => {
 
         console.log(decoded)
 
+    } catch (err) {
+
+        console.log(err)
+
+        const error = {
+            erro: true,
+            tipo: 'ERRO',
+            msg: 'Não autorizado',
+        }
+
+        return res.status(400).send(error)
+    }
+
+    // pega o usuario no banco de dados e retorna a solicitacao
+    try {
+
+        const usuario = await Users.findOne({ _id: req.body.userId });
+
+        if (!usuario) {
+
+            const error = {
+                erro: true,
+                tipo: 'ERRO',
+                msg: "Usuário não encontrado.",
+            }
+
+            return res.status(400).send(error)
+
+        }
+
+        res.status(200).send({ user: usuario })
+
+    } catch (err) {
+
+        const error = {
+            erro: true,
+            tipo: 'ERRO',
+            msg: 'Ocorreu um erro ao atualizar o usuário.',
+        }
+
+        return res.status(400).send(error)
+    }
+
+
+}
+
+const updateUser = async (req, res,) => {
+
+    let decoded = {}
+
+    //verifica o token, se o token esta correto e se o usuario é admin
+    try {
+
+        decoded = jwt.decode(req.body.token, authSecret);
+
+        if (decoded.role != 'admin') {
+
+            let error = {
+                erro: true,
+                tipo: 'ERRO',
+                msg: 'Não autorizado',
+            }
+
+            return res.status(400).send(error)
+
+        }
+
+        console.log(decoded)
 
     } catch (error) {
 
@@ -213,13 +284,82 @@ const updateUser = async (req, res,) => {
         return res.status(400).send(err)
     }
 
-
-
     try {
 
         const email = decoded.email;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+
+        const usuario = await Users.findOne({ email: email });
+
+        if (!usuario) {
+            return res.status(404).send("Usuário não encontrado.");
+        }
+
+        usuario.name = req.body.name || usuario.name;
+        usuario.email = req.body.email || usuario.email;
+        usuario.password = hashedPassword || usuario.password;
+
+        console.log(usuario)
+
+        await usuario.save();
+
+
+        return res.status(200).send({ sucesso: true, mensagem: 'Usuário atualizado com sucesso.' });
+
+    } catch (error) {
+
+        return res.status(500).send({ sucesso: false, mensagem: 'Ocorreu um erro ao atualizar o usuário.' });
+    }
+
+
+
+}
+
+const updateUserPassword = async (req, res,) => {
+
+    let decoded = {}
+
+    console.log('aqui')
+    //verifica o token, se o token esta correto e se o usuario é admin
+    try {
+
+        decoded = jwt.decode(req.body.token, authSecret);
+
+        if (decoded.role != 'admin') {
+
+            let error = {
+                erro: true,
+                tipo: 'ERRO',
+                msg: 'Não autorizado',
+            }
+
+            return res.status(400).send(error)
+
+        }
+
+        console.log(decoded)
+
+    } catch (error) {
+
+        console.log(error)
+
+        const err = {
+            erro: true,
+            tipo: 'ERRO',
+            msg: 'Não autorizado',
+        }
+
+        return res.status(400).send(err)
+    }
+
+    // altera dados do usuário
+    try {
+
+        const email = req.body.email;
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
 
 
         const usuario = await Users.findOne({ email: email });
@@ -342,7 +482,7 @@ const getUsers = async (req, res, next) => {
         return res.status(400).send(err)
     }
 
-    const users = await Users.find({role: { $ne: 'admin' } })
+    const users = await Users.find({ role: { $ne: 'admin' } })
     return res.send(users)
 }
 
@@ -394,7 +534,7 @@ const signin = async (req, res) => {
 
 }
 
-
+routesUsers.post('/update/userPassword', updateUserPassword);
 routesUsers.post('/solicitacoes/resolve', avlSolicitacao);
 routesUsers.post('/solicicoes', getSolicitacoes);
 routesUsers.post("/solicitacao-nova-conta", newSolicitacao);
@@ -403,6 +543,7 @@ routesUsers.post("/deleteuser", deleteUser);
 routesUsers.post("/generateUser", generateUser);
 routesUsers.post('/login', signin);
 routesUsers.post('/all', getUsers);
+routesUsers.post('/getUser', getUser);
 //routesUsers.get('/', getUsers);
 
 
