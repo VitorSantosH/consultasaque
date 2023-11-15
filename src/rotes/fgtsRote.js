@@ -130,7 +130,6 @@ routesFgts.post('/getTable', async (req, res) => {
         const requestData = JSON.stringify({
             cpf: req.body.params.cpf,
             tabela: req.body.params.table[index].value,
-            //  taxa: 2.04,
             parcelas: req.body.params.parcelas
         });
 
