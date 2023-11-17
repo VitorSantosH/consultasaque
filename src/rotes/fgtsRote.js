@@ -276,6 +276,26 @@ routesFgts.post("/history", async (req, res) => {
 
 })
 
+
+
+// excluir historico antigo 
+async function excluirDocumentosAntigos() {
+    const dataLimite = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000); // 3 dias atrás
+  
+    try {
+      await pesquisaCpf.deleteMany({ dataExpiracao: { $lt: dataLimite } });
+      console.log('Documentos antigos excluídos com sucesso.');
+    } catch (error) {
+      console.error('Erro ao excluir documentos antigos:', error);
+    }
+  }
+  
+  // Chamar a função a cada 24 horas (ajuste conforme necessário)
+  setInterval(excluirDocumentosAntigos, 24 * 60 * 60 * 1000);
+
+
+
+
 // pan 
 
 // rate limit  pan

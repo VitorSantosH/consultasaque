@@ -22,8 +22,8 @@ const pesquisaCpf = new mongoose.Schema({
   ],
   dataExpiracao: {
     type: Date,
-    expires: 60 * 60 * 24 * 3,
-  },
+    expires: '3d', // ou 60 * 60 * 24 * 3
+  }
 
 });
 
