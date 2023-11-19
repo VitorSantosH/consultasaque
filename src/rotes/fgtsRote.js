@@ -237,8 +237,30 @@ routesFgts.post("/history", async (req, res) => {
 
         decoded = jwt.decode(req.body.token, authSecret);
 
-        if (decoded.role != 'admin') {
+        if (decoded.role == 'admin' || decoded.id == req.body.userId) {
 
+            await pesquisaCpf.find({ autor: req.body.userId })
+                .then(result => {
+                    console.log(result)
+                    return res.send(result);
+                })
+                .catch(err => {
+                    console.log(err)
+                    return res.send(err);
+                })
+
+
+            /**
+             *    let error = {
+                   erro: true,
+                   tipo: 'ERRO',
+                   msg: 'Não autorizado',
+               }
+   
+               return res.status(400).send(error)
+             */
+
+        } else {
             let error = {
                 erro: true,
                 tipo: 'ERRO',
@@ -246,20 +268,10 @@ routesFgts.post("/history", async (req, res) => {
             }
 
             return res.status(400).send(error)
-
         }
 
 
 
-        await pesquisaCpf.find({ autor: req.body.userId })
-            .then(result => {
-                console.log(result)
-                return res.send(result);
-            })
-            .catch(err => {
-                console.log(err)
-                return res.send(err);
-            })
 
 
 
@@ -298,7 +310,7 @@ async function adicionarExpiracao() {
 
         const pesquisa = await pesquisaCpf.find({});
         console.log(pesquisa)
-        
+
         const retornoAddExp = await pesquisaCpf.updateMany({ expiracao: { $exists: false } }, update)
             .then(res => {
                 console.log('Campo adicionado com sucesso.');
@@ -334,7 +346,7 @@ async function adicionarExpiracao() {
         console.log("Erro ao excluir" + error)
     }
 
-    
+
 
 }
 
