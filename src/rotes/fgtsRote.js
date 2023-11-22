@@ -296,7 +296,7 @@ routesFgts.post("/history", async (req, res) => {
 
 // excluir historico antigo 
 
-var interval = 60 * 1000 * 10;
+var interval = 60 * 1000 * 60 * 24;
 
 async function adicionarExpiracao() {
 
