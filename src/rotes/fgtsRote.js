@@ -119,15 +119,15 @@ routesFgts.post('/getTable', async (req, res) => {
     for (let index = 0; index < req.body.params.table.length; index++) {
 
         const tables = [
-            { name: 'GOLD RB', value: 46205, cheked: true },
-            { name: 'GOLD + RB', value: 46183, cheked: true },
-            { name: 'FLEX 2', value: 40789, cheked: true },
-            { name: 'FLEX 1', value: 40770, cheked: true },
-            { name: 'FLEX -', value: 40762, cheked: true },
-            { name: 'SMART', value: 40797, cheked: true },
-            { name: 'LIGHT RB', value: 46230, cheked: true },
-            { name: 'PLUS', value: 46213, cheked: true },
-            { name: 'PLUS +', value: 46191, cheked: true },
+            { name: 'LIGHT RB', value: 48291, cheked: true },
+            { name: 'PLUS RB', value: 48267, cheked: true },
+            { name: 'PLUS + RB', value: 48259, cheked: true },
+            { name: 'GOLD  RB', value: 48240, cheked: true },
+            { name: 'GOLD + RB', value: 48232, cheked: true },
+            { name: 'SMART RB', value: 48305, cheked: true },
+            { name: 'TOP RB', value: 48275, cheked: true },
+            { name: 'FLEX 1 RB', value: 48283, cheked: true },
+            { name: 'TURBO AG', value: 48445, cheked: true },
         ]
 
         const requestData = JSON.stringify({
@@ -178,7 +178,7 @@ routesFgts.post('/getTable', async (req, res) => {
 
     } catch (error) {
         resultPesquisa = error
-        console.log(err)
+        console.log(error)
     }
 
 
