@@ -227,9 +227,6 @@ routesFgts.post('/saldo', async (req, res) => {
             return res.send(error)
         });
 
-
-
-
 })
 
 routesFgts.post("/history", async (req, res) => {
