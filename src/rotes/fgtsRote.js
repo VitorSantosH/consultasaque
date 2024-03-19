@@ -128,6 +128,9 @@ routesFgts.post('/getTable', async (req, res) => {
             { name: 'TOP RB', value: 48275, cheked: true },
             { name: 'FLEX 1 RB', value: 48283, cheked: true },
             { name: 'TURBO AG', value: 48445, cheked: true },
+            { name: 'FGTS TOP', value: 48275, cheked: true },
+            { name: 'FGTS PLUS', value: 48267 , cheked: true },
+            { name: 'FGTS PLUS +', value: 48259, cheked: true },
         ]
 
         const requestData = JSON.stringify({
